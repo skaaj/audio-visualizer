@@ -1,0 +1,9 @@
+{
+	"compilerOptions": {
+		"target": "ES5",
+		"module": "commonjs",
+		"out": "./js/app.js",
+		"removeComments": true,
+		"watch": true
+	}
+}
