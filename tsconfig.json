@@ -1,9 +1,9 @@
 {
 	"compilerOptions": {
 		"target": "ES5",
-		"module": "commonjs",
+		"module": "amd",
 		"out": "./js/app.js",
 		"removeComments": true,
-		"watch": true
+		"watch": false
 	}
 }
