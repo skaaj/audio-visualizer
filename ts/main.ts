@@ -1,11 +1,25 @@
 ///<reference path="./libs/threejs/three.d.ts"/>
+///<reference path="./libs/stats/stats.d.ts"/>
 
 class Application {
+    private static _statsMonitor: Stats;
+    
     public static main(): void {
         console.log('Application.main');
 
-        // create the scene and starts rendering loop
+        // adds the monitoring frame
+        this._statsMonitor = new Stats();
+        this._statsMonitor.setMode(0);
+
+        this._statsMonitor.domElement.style.position = 'absolute';
+        this._statsMonitor.domElement.style.left = '0px';
+        this._statsMonitor.domElement.style.top = '0px';
+        
+        document.body.appendChild(this._statsMonitor.domElement);
+
+        // creates the scene and starts rendering loop
         var scene = new Scene(window.innerWidth, window.innerHeight, 0x101010, 75, 0.1, 1000);
+        scene.setStatsMonitor(this._statsMonitor);
         scene.render();
     }
 }
@@ -27,7 +41,9 @@ class Scene {
     private _height: number;
 
     private _planet: THREE.Mesh;
-
+    
+    private _statsMonitor: Stats;
+    
     // methods
     constructor(width: number, height: number, clearColor: any, fov: number, near: number, far: number) {     
         this._width  = width;
@@ -46,8 +62,8 @@ class Scene {
             material: new THREE.MeshPhongMaterial({color: 0x00ff00, wireframe: true}),
             position: new THREE.Vector3(0, 0, 0),
             radius: 2,
-            widthSegments: 64,
-            heightSegments: 64
+            widthSegments: 16,
+            heightSegments: 16
         });
         
         var ambientLight = new THREE.AmbientLight(0x000000);
@@ -67,12 +83,21 @@ class Scene {
         this._camera.position.z = 10;
     }
     
-    render(): void{
-        window.requestAnimationFrame(() => this.render());
+    render(): void {
+        this._statsMonitor.begin();
         
+        // rendering iteration code
         this._planet.rotateY(0.0105);
+        this._renderer.render(this._scene, this._camera);
         
-        this._renderer.render(this._scene, this._camera);     
+        this._statsMonitor.end();
+        
+        // render loop
+        window.requestAnimationFrame(() => this.render());
+    }
+    
+    setStatsMonitor(sm: Stats) : void {
+        this._statsMonitor = sm;
     }
     
     addSphere(config: SphereConfig): THREE.Mesh {
