@@ -16,7 +16,7 @@ class Application {
         this._statsMonitor.domElement.style.top = '0px';
         
         document.body.appendChild(this._statsMonitor.domElement);
-
+        
         // creates the scene and starts rendering loop
         var scene = new Scene(window.innerWidth, window.innerHeight, 0x101010, 75, 0.1, 1000);
         scene.setStatsMonitor(this._statsMonitor);
@@ -40,9 +40,11 @@ class Scene {
     private _width: number;
     private _height: number;
 
+    private _shaderMaterial: THREE.ShaderMaterial;
     private _planet: THREE.Mesh;
     
     private _statsMonitor: Stats;
+    private _start;
     
     // methods
     constructor(width: number, height: number, clearColor: any, fov: number, near: number, far: number) {     
@@ -58,36 +60,42 @@ class Scene {
         this._camera = new THREE.PerspectiveCamera(fov, this._width / this._height, near, far);
         
         // populating the scene
-        this._planet = this.addSphere({
-            material: new THREE.MeshPhongMaterial({color: 0x00ff00, wireframe: true}),
-            position: new THREE.Vector3(0, 0, 0),
-            radius: 2,
-            widthSegments: 16,
-            heightSegments: 16
+        this._shaderMaterial = new THREE.ShaderMaterial({
+            uniforms: { 
+                tExplosion: {
+                    type: "t", 
+                    value: THREE.ImageUtils.loadTexture('ts/explosion.png')
+                },
+                time: { // float initialized to 0
+                    type: "f", 
+                    value: 0.0 
+                }
+            },
+            vertexShader: document.getElementById('vertexShader').textContent,
+            fragmentShader: document.getElementById('fragmentShader').textContent
         });
         
-        var ambientLight = new THREE.AmbientLight(0x000000);
-        var lights = [];
-        lights[0] = new THREE.PointLight(0xffffff, 1, 0);
-        lights[1] = new THREE.PointLight(0xffffff, 0.1, 0);
-        
-        lights[0].position.set(20, 0, 0);
-        lights[1].position.set(0, 0, 5);
-
-        this._scene.add(ambientLight);
-        this._scene.add(lights[0]);
-        this._scene.add(lights[1]);
-        this._scene.add(lights[2]);
+        this._planet = this.addSphere({
+            material: this._shaderMaterial,
+            position: new THREE.Vector3(0, 0, 0),
+            radius: 100,
+            widthSegments: 256,
+            heightSegments: 256
+        });
         
         // positioning the camera
-        this._camera.position.z = 10;
+        this._camera.position.z = 400;
+        
+        //
+        this._start = Date.now();
     }
     
     render(): void {
         this._statsMonitor.begin();
         
         // rendering iteration code
-        this._planet.rotateY(0.0105);
+        //this._planet.rotateY(0.0105);
+        this._shaderMaterial.uniforms[ 'time' ].value = .00025 * ( Date.now() - this._start );
         this._renderer.render(this._scene, this._camera);
         
         this._statsMonitor.end();

@@ -4,6 +4,6 @@
 		"module": "amd",
 		"out": "./js/app.js",
 		"removeComments": true,
-		"watch": false
+		"watch": true
 	}
 }
