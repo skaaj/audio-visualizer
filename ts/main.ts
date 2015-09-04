@@ -1,3 +1,4 @@
+///<reference path="./libs/jquery/jquery.d.ts"/>
 ///<reference path="./libs/threejs/three.d.ts"/>
 ///<reference path="./libs/stats/stats.d.ts"/>
 
@@ -17,10 +18,31 @@ class Application {
         
         document.body.appendChild(this._statsMonitor.domElement);
         
-        // creates the scene and starts rendering loop
+        // load the shaders
+        var shaders = this.loadShaders();
+        
         var scene = new Scene(window.innerWidth, window.innerHeight, 0x101010, 75, 0.1, 1000);
         scene.setStatsMonitor(this._statsMonitor);
+        scene.initScene(shaders);
         scene.render();
+    }
+    
+    private static loadShaders(): any {
+        var urls = ['planet.vert', 'planet.frag'],
+            length = urls.length,
+            container = {};
+        
+        for (var i = 0; i < length; i++) {
+            $.ajax({
+                url: 'ts/shaders/' + urls[i],
+                async: false, //@fixme: deprecated...
+                context: {container: container, urls: urls, index: i}
+            }).done(function(response){
+                this.container[this.urls[this.index]] = response;
+            });
+        }
+        
+        return container;
     }
 }
 
@@ -40,7 +62,7 @@ class Scene {
     private _width: number;
     private _height: number;
 
-    private _shaderMaterial: THREE.ShaderMaterial;
+    private _planetMaterial: THREE.ShaderMaterial;
     private _planet: THREE.Mesh;
     
     private _statsMonitor: Stats;
@@ -58,36 +80,37 @@ class Scene {
 
         this._scene  = new THREE.Scene();
         this._camera = new THREE.PerspectiveCamera(fov, this._width / this._height, near, far);
-        
-        // populating the scene
-        this._shaderMaterial = new THREE.ShaderMaterial({
+
+        this._start = Date.now();
+    }
+    
+    initScene(shaders): void {
+        // generating the material from the shaders
+        this._planetMaterial = new THREE.ShaderMaterial({
             uniforms: { 
                 tExplosion: {
                     type: "t", 
-                    value: THREE.ImageUtils.loadTexture('ts/explosion.png')
+                    value: THREE.ImageUtils.loadTexture('ts/textures/explosion.png')
                 },
                 time: { // float initialized to 0
                     type: "f", 
                     value: 0.0 
                 }
             },
-            vertexShader: document.getElementById('vertexShader').textContent,
-            fragmentShader: document.getElementById('fragmentShader').textContent
+            vertexShader: shaders['planet.vert'],
+            fragmentShader: shaders['planet.frag']
         });
         
         this._planet = this.addSphere({
-            material: this._shaderMaterial,
+            material: this._planetMaterial,
             position: new THREE.Vector3(0, 0, 0),
             radius: 100,
-            widthSegments: 256,
-            heightSegments: 256
+            widthSegments: 128,
+            heightSegments: 128
         });
         
         // positioning the camera
         this._camera.position.z = 400;
-        
-        //
-        this._start = Date.now();
     }
     
     render(): void {
@@ -95,7 +118,7 @@ class Scene {
         
         // rendering iteration code
         //this._planet.rotateY(0.0105);
-        this._shaderMaterial.uniforms[ 'time' ].value = .00025 * ( Date.now() - this._start );
+        this._planetMaterial.uniforms[ 'time' ].value = .00025 * ( Date.now() - this._start );
         this._renderer.render(this._scene, this._camera);
         
         this._statsMonitor.end();
