@@ -1,48 +1,52 @@
-///<reference path="./libs/jquery/jquery.d.ts"/>
-///<reference path="./libs/threejs/three.d.ts"/>
-///<reference path="./libs/stats/stats.d.ts"/>
+///<reference path="./lib/jquery/jquery.d.ts"/>
+///<reference path="./lib/threejs/three.d.ts"/>
+///<reference path="./lib/stats/stats.d.ts"/>
 
 class Application {
-    private static _statsMonitor: Stats;
+    private static _scene: Scene;
+    private static _statMonitor: Stats;
+    private static _shaders: any;
     
     public static main(): void {
         console.log('Application.main');
 
-        // adds the monitoring frame
-        this._statsMonitor = new Stats();
-        this._statsMonitor.setMode(0);
-
-        this._statsMonitor.domElement.style.position = 'absolute';
-        this._statsMonitor.domElement.style.left = '0px';
-        this._statsMonitor.domElement.style.top = '0px';
-        
-        document.body.appendChild(this._statsMonitor.domElement);
-        
-        // load the shaders
-        var shaders = this.loadShaders();
-        
-        var scene = new Scene(window.innerWidth, window.innerHeight, 0x101010, 75, 0.1, 1000);
-        scene.setStatsMonitor(this._statsMonitor);
-        scene.initScene(shaders);
-        scene.render();
+        // Waiting for shader to load and init the scene
+        var shaderUrlPrefix = 'ts/shaders/',
+            me = this;
+            
+        console.log(Date.now() + ' Loading...');
+        $.when(
+            $.get(shaderUrlPrefix + 'planet.vert'),
+            $.get(shaderUrlPrefix + 'planet.frag')
+        ).then(function() {
+            console.log(Date.now() + ' Loaded.')
+            me._shaders = [];
+            for (var i = 0; i < arguments.length; i++) {
+                me._shaders.push(arguments[0][0]);
+            }
+            
+            me.initScene();
+            me.initStatMonitor();
+            me._scene.setStatsMonitor(me._statMonitor);
+            me._scene.render();
+        });
     }
     
-    private static loadShaders(): any {
-        var urls = ['planet.vert', 'planet.frag'],
-            length = urls.length,
-            container = {};
+    private static initScene(): void {
+        this._scene = new Scene(window.innerWidth, window.innerHeight, 0x101010, 75, 0.1, 1000);
+        this._scene.setStatsMonitor(this._statMonitor);
+        this._scene.initScene(this._shaders);
+    }
+    
+    private static initStatMonitor(): void {
+        this._statMonitor = new Stats();
+        this._statMonitor.setMode(0);
+
+        this._statMonitor.domElement.style.position = 'absolute';
+        this._statMonitor.domElement.style.left = '0px';
+        this._statMonitor.domElement.style.top = '0px';
         
-        for (var i = 0; i < length; i++) {
-            $.ajax({
-                url: 'ts/shaders/' + urls[i],
-                async: false, //@fixme: deprecated...
-                context: {container: container, urls: urls, index: i}
-            }).done(function(response){
-                this.container[this.urls[this.index]] = response;
-            });
-        }
-        
-        return container;
+        $("#container").append(this._statMonitor.domElement);
     }
 }
 
@@ -74,9 +78,10 @@ class Scene {
         this._height = height;
 
         this._renderer = new THREE.WebGLRenderer();
+        this._renderer.setPixelRatio(window.devicePixelRatio);
         this._renderer.setSize(width, height);
         this._renderer.setClearColor(clearColor);
-        document.body.appendChild(this._renderer.domElement);
+        $("#container").append(this._renderer.domElement);
 
         this._scene  = new THREE.Scene();
         this._camera = new THREE.PerspectiveCamera(fov, this._width / this._height, near, far);
