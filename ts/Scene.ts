@@ -18,7 +18,7 @@ class Scene {
     private _width: number;
     private _height: number;
 
-    private _planetMaterial: THREE.ShaderMaterial;
+    private _planetMaterial: THREE.MeshPhongMaterial;
     private _planet: THREE.Mesh;
     
     private _statsMonitor: Stats;
@@ -43,27 +43,40 @@ class Scene {
     
     initScene(shaders): void {
         // generating the material from the shaders
-        this._planetMaterial = new THREE.ShaderMaterial({
-            uniforms: { 
-                tExplosion: {
-                    type: "t", 
-                    value: THREE.ImageUtils.loadTexture('ts/textures/explosion.png')
-                },
-                time: { // float initialized to 0
-                    type: "f", 
-                    value: 0.0 
-                }
-            },
-            vertexShader: shaders[0], // @fixme: wrong!!
-            fragmentShader: shaders[1] // @fixme: put identifiers
-        });
+        // this._planetMaterial = new THREE.ShaderMaterial({
+        //     uniforms: { 
+        //         tExplosion: {
+        //             type: "t", 
+        //             value: THREE.ImageUtils.loadTexture('ts/textures/explosion.png')
+        //         },
+        //         time: { // float initialized to 0
+        //             type: "f", 
+        //             value: 0.0 
+        //         }
+        //     },
+        //     vertexShader: shaders[0], // @fixme: wrong!!
+        //     fragmentShader: shaders[1] // @fixme: put identifiers
+        // });
+
+        this._planetMaterial = new THREE.MeshPhongMaterial();
+        this._planetMaterial.map = THREE.ImageUtils.loadTexture('ts/textures/earthmap.jpg')
+        
+        this._planetMaterial.bumpMap    = THREE.ImageUtils.loadTexture('ts/textures/earthbump.jpg')
+        this._planetMaterial.bumpScale = 1.5
+        
+        var pointLight = new THREE.PointLight(0xffffff, 2, 1500);
+        pointLight.position.set(150, 150, 150);
+        this._scene.add( pointLight );
+        
+        var light = new THREE.AmbientLight(0x404040);
+        this._scene.add(light);
         
         this._planet = this.addSphere({
             material: this._planetMaterial,
             position: new THREE.Vector3(0, 0, 0),
             radius: 100,
-            widthSegments: 128,
-            heightSegments: 128
+            widthSegments: 32,
+            heightSegments: 32
         });
         
         // positioning the camera
@@ -74,8 +87,8 @@ class Scene {
         this._statsMonitor.begin();
         
         // rendering iteration code
-        //this._planet.rotateY(0.0105);
-        this._planetMaterial.uniforms[ 'time' ].value = .00025 * ( Date.now() - this._start );
+        this._planet.rotateY(0.0105);
+        //this._planetMaterial.uniforms[ 'time' ].value = .00025 * ( Date.now() - this._start );
         this._renderer.render(this._scene, this._camera);
         
         this._statsMonitor.end();
