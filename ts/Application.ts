@@ -29,7 +29,7 @@ class Application {
             
             me._shaders = [];
             for (var i = 0; i < arguments.length; i++) {
-                me._shaders.push(arguments[0][0]);
+                me._shaders.push(arguments[i][0]);
             }
             
             console.log(Date.now() + ' Initialize the scene.');
