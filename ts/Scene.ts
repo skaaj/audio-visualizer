@@ -14,7 +14,7 @@ class Scene {
     // attributes
 	private _renderer: THREE.WebGLRenderer;
     private _scene: THREE.Scene;
-    private _camera: THREE.Camera;
+    private _camera: THREE.PerspectiveCamera;
     private _width: number;
     private _height: number;
 
@@ -75,12 +75,43 @@ class Scene {
             material: this._planetMaterial,
             position: new THREE.Vector3(0, 0, 0),
             radius: 100,
-            widthSegments: 32,
-            heightSegments: 32
+            widthSegments: 16,
+            heightSegments: 16
         });
         
+        // skybox stuff
+        var skyboxUrls = [
+            'ts/textures/backImage.png',
+            'ts/textures/downImage.png',
+            'ts/textures/frontImage.png',
+            'ts/textures/leftImage.png',
+            'ts/textures/rightImage.png',
+            'ts/textures/upImage.png'
+        ];
+        
+        var cubemap = THREE.ImageUtils.loadTextureCube(skyboxUrls);
+        cubemap.format = THREE.RGBFormat;
+        
+        var shader = THREE.ShaderLib['cube'];
+        shader.uniforms['tCube'].value = cubemap;
+        
+        var skyBoxMaterial = new THREE.ShaderMaterial( {
+            fragmentShader: shader.fragmentShader,
+            vertexShader: shader.vertexShader,
+            uniforms: shader.uniforms,
+            depthWrite: false,
+            side: THREE.BackSide
+        });
+
+        var skybox = new THREE.Mesh(
+            new THREE.CubeGeometry(1000, 1000, 1000),
+            skyBoxMaterial
+        );
+        
+        this._scene.add(skybox);
+        
         // positioning the camera
-        this._camera.position.z = 400;
+        this._camera.position.z = 300;
     }
     
     render(): void {

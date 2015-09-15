@@ -41,7 +41,7 @@ class Application {
     }
     
     private static initScene(): void {
-        this._scene = new Scene(window.innerWidth, window.innerHeight, 0x101010, 75, 0.1, 1000);
+        this._scene = new Scene(window.innerWidth, window.innerHeight, 0x101010, 75, 0.1, 10000);
         this._scene.setStatsMonitor(this._statMonitor);
         this._scene.initScene(this._shaders);
     }
