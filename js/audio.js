@@ -1,7 +1,7 @@
 var context;
 var source, sourceJs;
 var analyser;
-var url = 'data/coyote_kisses-six_shooter.mp3';
+var url = 'data/Make_U_Greedy_La_Boulangerie_3.mp3';
 var array = new Array();
 var boost = 0;
 
@@ -67,7 +67,7 @@ request.onload = function() {
 
 			$('#info')
 				.fadeOut('normal', function() {
-					$(this).html('<div id="artist"><a class="name" href="https://soundcloud.com/coyotekisses" target="_blank">Coyote Kisses</a><br /><a class="song" href="https://soundcloud.com/coyotekisses/six-shooter" target="_blank">Six shooter</a><br /></div><div><img src="data/coyote_kisses.jpg" width="58" height="58" /></div>');
+					$(this).html('<div id="artist"><a class="name" href="https://soundcloud.com/lafineequipe" target="_blank">La Fine Equipe (LFE)</a><br /><a class="song" href="https://soundcloud.com/lafineequipe/make-u-lfe" target="_blank">Make U Greedy - La Boulangerie 3</a><br /></div><div><img src="data/cover.jpg" width="58" height="58" /></div>');
 				})
 				.fadeIn();
 
