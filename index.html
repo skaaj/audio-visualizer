@@ -1,18 +1,101 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
 	<meta charset="UTF-8">
 	<title>audio-visualizer</title>
 	<style>
-		body { margin: 0; }
-		canvas { display: block; }
+		body {
+			margin: 0;
+			padding: 0;
+			color: #FFF;
+			font-size: 1.4em;
+			font-weight: 300;
+			font-family: 'Raleway', sans-serif;
+			text-shadow: 0px 0px 5px #333;
+		}
+		
+		canvas {
+			display: block;
+		}
+		
+		#info {
+			position: absolute;
+			bottom: 20px;
+			right: 20px;
+			padding: 5px;
+			text-align: right;
+		}
+		
+		#info a,
+		#blog a {
+			color: inherit;
+			text-decoration: inherit;
+		}
+		
+		#info a:hover,
+		#blog a:hover {
+			text-decoration: underline;
+		}
+		
+		#info div {
+			padding: 0 5px;
+			display: inline-block;
+		}
+		
+		#info div img {
+			position: relative;
+			top: 9px;
+			border-radius: 3px;
+		}
+		
+		#info #artist {
+			margin-right: 5px;
+		}
+		
+		#info #artist .name {
+			font-size: 0.8em;
+		}
+		
+		#info #artist .song {}
+		
+		#play {
+			position: fixed;
+			top: 0;
+			left: 0;
+			background-color: rgba(0, 0, 0, 0.3);
+			display: none;
+		}
+		
+		#play_link {
+			position: fixed;
+			top: 0;
+			left: 0;
+			height: 64px;
+			width: 64px;
+			background: url('../images/play.png') left center no-repeat transparent;
+			cursor: pointer;
+		}
+		
+		#blog {
+			position: absolute;
+			bottom: 20px;
+			left: 20px;
+			padding: 5px;
+		}
 	</style>
 </head>
+
 <body>
+
 	<div id="container"></div>
+	<div id="info">Loading music<span id="loading_dots"></span></div>
+	<div id="blog"><a href="https://github.com/skaaj/audio-visualizer/">GitHub</a></div>
 	<script src="js/lib/jquery.min.js"></script>
 	<script src="js/lib/three.min.js"></script>
 	<script src="js/lib/stats.min.js"></script>
 	<script src="js/app.js"></script>
+	<script type="text/javascript" src="js/audio.js"></script>
 </body>
+
 </html>
