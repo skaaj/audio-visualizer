@@ -75,8 +75,8 @@ class Scene {
             material: this._planetMaterial,
             position: new THREE.Vector3(0, 0, 0),
             radius: 100,
-            widthSegments: 16,
-            heightSegments: 16
+            widthSegments: 32,
+            heightSegments: 32
         });
         
         // skybox stuff
@@ -120,6 +120,22 @@ class Scene {
         // rendering iteration code
         this._planet.rotateY(0.0105);
         //this._planetMaterial.uniforms[ 'time' ].value = .00025 * ( Date.now() - this._start );
+        
+        for (var i = 0; i < this._planet.geometry.vertices.length; i++) {
+            var offset = Math.sin(new Date().getSeconds());
+            this._planet.geometry.vertices[i].x += offset;
+            this._planet.geometry.vertices[i].y += offset;
+            this._planet.geometry.vertices[i].z += offset;
+        }
+        
+        for (var i = 0; i < this._planet.geometry.vertices.length; i++) {
+            var offset = Math.cos(new Date().getSeconds());
+            this._planet.geometry.vertices[i].x += offset;
+            this._planet.geometry.vertices[i].y += offset;
+            this._planet.geometry.vertices[i].z += offset;
+        }
+        
+        this._planet.geometry.verticesNeedUpdate = true;
         this._renderer.render(this._scene, this._camera);
         
         this._statsMonitor.end();
