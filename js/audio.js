@@ -45,7 +45,7 @@ request.onload = function() {
 			sourceJs.connect(context.destination);
 			analyser = context.createAnalyser();
 			analyser.smoothingTimeConstant = 0.1;
-			analyser.fftSize = 64;
+			analyser.fftSize = 2048;
 
 			source = context.createBufferSource();
 			source.buffer = buffer;
