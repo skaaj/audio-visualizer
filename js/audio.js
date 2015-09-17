@@ -44,8 +44,8 @@ request.onload = function() {
 			sourceJs.buffer = buffer;
 			sourceJs.connect(context.destination);
 			analyser = context.createAnalyser();
-			analyser.smoothingTimeConstant = 0.6;
-			analyser.fftSize = 512;
+			analyser.smoothingTimeConstant = 0.1;
+			analyser.fftSize = 64;
 
 			source = context.createBufferSource();
 			source.buffer = buffer;
@@ -58,6 +58,7 @@ request.onload = function() {
 			sourceJs.onaudioprocess = function(e) {
 				array = new Uint8Array(analyser.frequencyBinCount);
 				analyser.getByteFrequencyData(array);
+				console.log(array);
 				boost = 0;
 				for (var i = 0; i < array.length; i++) {
 		            boost += array[i];
