@@ -17,7 +17,7 @@ class Application {
         console.log('Starting application.');
 
         // Waiting for shader to load and init the scene
-        var shaderUrlPrefix = 'ts/shaders/',
+        var shaderUrlPrefix = 'assets/shaders/',
             me = this;
             
         console.log(Date.now() + ' Loading resources...');

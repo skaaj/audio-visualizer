@@ -7,11 +7,12 @@ var boost = 0;
 
 
 var interval = window.setInterval(function () {
-	if ($('#loading_dots').text().length < 3) {
-		$('#loading_dots').text($('#loading_dots').text() + '.');
+	var loadingDots = $('#loading_dots');
+	if (loadingDots.text().length < 3) {
+		loadingDots.text(loadingDots.text() + '.');
 	}
 	else {
-		$('#loading_dots').text('');
+		loadingDots.text('');
 	}
 }, 500);
 
@@ -23,10 +24,10 @@ try {
 	else {
 		context = new AudioContext();
 	}
-}
-catch(e) {
+} catch(e) {
 	$('#info').text('Web Audio API is not supported in this browser');
 }
+
 var request = new XMLHttpRequest();
 request.open("GET", url, true);
 request.responseType = "arraybuffer";
@@ -58,7 +59,7 @@ request.onload = function() {
 			sourceJs.onaudioprocess = function(e) {
 				array = new Uint8Array(analyser.frequencyBinCount);
 				analyser.getByteFrequencyData(array);
-				console.log(array);
+				//console.log(array);
 				boost = 0;
 				for (var i = 0; i < array.length; i++) {
 		            boost += array[i];
@@ -111,13 +112,16 @@ function play() {
 }
 
 $(window).resize(function() {
-	if($('#play').length === 1) {
-		$('#play').width($(window).width());
-		$('#play').height($(window).height());
+	var play = $('#play'),
+		playLink = $('#play_link');
 
-		if($('#play_link').length === 1) {
-			$('#play_link').css('top', ($(window).height() / 2 - $('#play_link').height() / 2) + 'px');
-			$('#play_link').css('left', ($(window).width() / 2 - $('#play_link').width() / 2) + 'px');
+	if(play.length === 1) {
+		play.width($(window).width());
+		play.height($(window).height());
+
+		if(playLink.length === 1) {
+			playLink.css('top', ($(window).height() / 2 - playLink.height() / 2) + 'px');
+			playLink.css('left', ($(window).width() / 2 - playLink.width() / 2) + 'px');
 		}
 	}
 });

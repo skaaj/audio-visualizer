@@ -47,7 +47,7 @@ class Scene {
         //     uniforms: { 
         //         tExplosion: {
         //             type: "t", 
-        //             value: THREE.ImageUtils.loadTexture('ts/textures/explosion.png')
+        //             value: THREE.ImageUtils.loadTexture('assets/textures/explosion.png')
         //         },
         //         time: { // float initialized to 0
         //             type: "f", 
@@ -59,9 +59,9 @@ class Scene {
         // });
 
         this._planetMaterial = new THREE.MeshPhongMaterial();
-        this._planetMaterial.map = THREE.ImageUtils.loadTexture('ts/textures/earthmap.jpg')
+        this._planetMaterial.map = THREE.ImageUtils.loadTexture('assets/textures/earthmap.jpg')
         
-        this._planetMaterial.bumpMap    = THREE.ImageUtils.loadTexture('ts/textures/earthbump.jpg')
+        this._planetMaterial.bumpMap    = THREE.ImageUtils.loadTexture('assets/textures/earthbump.jpg')
         this._planetMaterial.bumpScale = 1.5
         
         var pointLight = new THREE.PointLight(0xffffff, 2, 1500);
@@ -81,12 +81,12 @@ class Scene {
         
         // skybox stuff
         var skyboxUrls = [
-            'ts/textures/backImage.png',
-            'ts/textures/downImage.png',
-            'ts/textures/frontImage.png',
-            'ts/textures/leftImage.png',
-            'ts/textures/rightImage.png',
-            'ts/textures/upImage.png'
+            'assets/textures/backImage.png',
+            'assets/textures/downImage.png',
+            'assets/textures/frontImage.png',
+            'assets/textures/leftImage.png',
+            'assets/textures/rightImage.png',
+            'assets/textures/upImage.png'
         ];
         
         var cubemap = THREE.ImageUtils.loadTextureCube(skyboxUrls);
