@@ -42,22 +42,6 @@ class Scene {
     }
     
     initScene(shaders): void {
-        // generating the material from the shaders
-        // this._planetMaterial = new THREE.ShaderMaterial({
-        //     uniforms: { 
-        //         tExplosion: {
-        //             type: "t", 
-        //             value: THREE.ImageUtils.loadTexture('assets/textures/explosion.png')
-        //         },
-        //         time: { // float initialized to 0
-        //             type: "f", 
-        //             value: 0.0 
-        //         }
-        //     },
-        //     vertexShader: shaders[0], // @fixme: wrong!!
-        //     fragmentShader: shaders[1] // @fixme: put identifiers
-        // });
-
         this._planetMaterial = new THREE.MeshPhongMaterial();
         this._planetMaterial.map = THREE.ImageUtils.loadTexture('assets/textures/earthmap.jpg')
         
@@ -75,8 +59,8 @@ class Scene {
             material: this._planetMaterial,
             position: new THREE.Vector3(0, 0, 0),
             radius: 100,
-            widthSegments: 32,
-            heightSegments: 32
+            widthSegments: 16,
+            heightSegments: 16
         });
         
         // skybox stuff
@@ -111,7 +95,7 @@ class Scene {
         this._scene.add(skybox);
         
         // positioning the camera
-        this._camera.position.z = 300;
+        this._camera.position.z = 500;
     }
     
     render(): void {
@@ -119,20 +103,11 @@ class Scene {
         
         // rendering iteration code
         this._planet.rotateY(0.0105);
-        //this._planetMaterial.uniforms[ 'time' ].value = .00025 * ( Date.now() - this._start );
         
-        for (var i = 0; i < this._planet.geometry.vertices.length; i++) {
-            var offset = Math.sin(new Date().getSeconds());
-            this._planet.geometry.vertices[i].x += offset;
-            this._planet.geometry.vertices[i].y += offset;
-            this._planet.geometry.vertices[i].z += offset;
-        }
-        
-        for (var i = 0; i < this._planet.geometry.vertices.length; i++) {
-            var offset = Math.cos(new Date().getSeconds());
-            this._planet.geometry.vertices[i].x += offset;
-            this._planet.geometry.vertices[i].y += offset;
-            this._planet.geometry.vertices[i].z += offset;
+        var nbVertices = this._planet.geometry.vertices.length;
+        for (var i = 0; i < nbVertices; i++) {
+            var vertex = this._planet.geometry.vertices[i];
+            vertex.multiplyScalar(1.0);
         }
         
         this._planet.geometry.verticesNeedUpdate = true;
