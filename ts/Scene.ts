@@ -95,7 +95,7 @@ class Scene {
         this._scene.add(skybox);
         
         // positioning the camera
-        this._camera.position.z = 400;
+        this._camera.position.z = 360;
     }
     
     render(): void {
@@ -104,6 +104,8 @@ class Scene {
         // rendering iteration code
         this._planet.rotateY(0.0105);
         
+        // @fixme: array shouldn't be use that way (waiting for proper Audio.ts)
+        // @todo: GPU-side displacement
         var nbVertices = this._planet.geometry.vertices.length,
             tmp = [],
             step = Math.floor(array.length / nbVertices),
@@ -134,7 +136,7 @@ class Scene {
     }
     
     addSphere(config: SphereConfig): THREE.Mesh {
-        var geometry = new THREE.IcosahedronGeometry(config.radius, 2);//config.widthSegments, config.heightSegments);
+        var geometry = new THREE.IcosahedronGeometry(config.radius, 2); //config.widthSegments, config.heightSegments);
         var sphere = new THREE.Mesh(geometry, config.material);
 
         sphere.translateX(config.position.x);
