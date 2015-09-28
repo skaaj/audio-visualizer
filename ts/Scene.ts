@@ -95,7 +95,7 @@ class Scene {
         this._scene.add(skybox);
         
         // positioning the camera
-        this._camera.position.z = 500;
+        this._camera.position.z = 400;
     }
     
     render(): void {
@@ -104,14 +104,24 @@ class Scene {
         // rendering iteration code
         this._planet.rotateY(0.0105);
         
-        var nbVertices = this._planet.geometry.vertices.length;
-        for (var i = 0; i < nbVertices; i++) {
-            var vertex = this._planet.geometry.vertices[i];
-            vertex.multiplyScalar(1.0);
+        var nbVertices = this._planet.geometry.vertices.length,
+            tmp = [],
+            step = Math.floor(array.length / nbVertices),
+            j = 0,
+            i, vertex, displacement;
+        for (i = 0; i < nbVertices; i++) {
+            vertex = this._planet.geometry.vertices[i];
+            tmp.push($.extend({}, vertex));
+            displacement = (array[j] != null) ? array[j] / 255 : 0;
+            vertex.multiplyScalar(1.0 + displacement);
+            j += step;
         }
         
         this._planet.geometry.verticesNeedUpdate = true;
         this._renderer.render(this._scene, this._camera);
+        
+        this._planet.geometry.vertices = tmp;
+        this._planet.geometry.verticesNeedUpdate = true;        
         
         this._statsMonitor.end();
         
@@ -124,7 +134,7 @@ class Scene {
     }
     
     addSphere(config: SphereConfig): THREE.Mesh {
-        var geometry = new THREE.SphereGeometry(config.radius, config.widthSegments, config.heightSegments);
+        var geometry = new THREE.IcosahedronGeometry(config.radius, 2);//config.widthSegments, config.heightSegments);
         var sphere = new THREE.Mesh(geometry, config.material);
 
         sphere.translateX(config.position.x);
